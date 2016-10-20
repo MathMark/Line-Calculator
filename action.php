@@ -2,12 +2,16 @@
 //$line=$_POST["expression"];
 echo $line;
 $stack=new Stack();
-$line="9*(3+5)/2";
+//$line="9*(3+5)/2";
+$line="(5-1)/2&+7";
 //$line="4+(5-1)*7";
-echo empty($_POST["expression"]);
+
 $outputLine=array();
 //echo count($line);
 $index=0;
+try{
+
+
 for($i=0;$i<strlen($line);$i++)
 {
 
@@ -28,7 +32,11 @@ for($i=0;$i<strlen($line);$i++)
         }
         $stack->pop();
     }
-    elseif(($line{$i}=='+')||($line{$i}=='-')||($line{$i}=='*')||($line{$i}=='/')){
+    elseif($line{$i}=='-')
+    {
+
+    }
+    elseif(($line{$i}=='+')||($line{$i}=='*')||($line{$i}=='/')){
         if($stack->isEmpty()==1)
         {
             $stack->push($line{$i});
@@ -48,7 +56,17 @@ for($i=0;$i<strlen($line);$i++)
 
         }
     }
+    else throw new RuntimeException("There is the wrong symbol - ".$line{$i});
 
+
+
+}
+}
+catch (RuntimeException $e)
+{
+    echo "\n"." Error: ";
+    echo $e->getMessage();
+    return;
 }
 if(!$stack->isEmpty())
 {
@@ -65,6 +83,8 @@ for($i=0;$i<count($outputLine);$i++)
     echo $outputLine[$i];
 }
 
+try
+{
 for($i=0;$i<count($outputLine);$i++)
 {
     if(ctype_digit($outputLine[$i]))
@@ -102,6 +122,13 @@ for($i=0;$i<count($outputLine);$i++)
 }
 echo "   ";
 $Result=$stack->pop();
+}
+catch (RuntimeException $e)
+{
+    echo "\n"." Error: ";
+    echo $e->getMessage();
+    return;
+}
 echo $Result;
 //$stack->showStack();
 
@@ -110,6 +137,7 @@ class Stack
 {
     protected $stack;
     protected $limit;
+
 
     public function __construct($limit=15)
     {
@@ -124,7 +152,7 @@ class Stack
         } else {
             echo count($this->stack);
             echo $this->limit;
-          //throw new RunTimeException('Stack is full!');
+          throw new RunTimeException('Stack is full!');
         }
 
     }
@@ -144,7 +172,7 @@ class Stack
 
     public function pop() {
         if ($this->isEmpty()) {
-         // throw new RunTimeException('Stack is empty!');
+          throw new RunTimeException('Stack is empty!');
       } else {
             return array_shift($this->stack);
         }
