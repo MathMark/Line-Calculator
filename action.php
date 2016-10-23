@@ -3,11 +3,14 @@
 echo $line;
 $stack=new Stack();
 //$line="9*(3+5)/2";
-$line="(5-1)/2&+7";
-//$line="4+(5-1)*7";
+//$inputline="(-5-1)/2+7";
+$inputline="(5+(-7))/2+9";
+
+$line=str_replace("(-","(~",$inputline);
+
 
 $outputLine=array();
-//echo count($line);
+
 $index=0;
 try{
 
@@ -32,11 +35,7 @@ for($i=0;$i<strlen($line);$i++)
         }
         $stack->pop();
     }
-    elseif($line{$i}=='-')
-    {
-
-    }
-    elseif(($line{$i}=='+')||($line{$i}=='*')||($line{$i}=='/')){
+    elseif(($line{$i}=='~')||($line{$i}=='+')||($line{$i}=='-')||($line{$i}=='*')||($line{$i}=='/')){
         if($stack->isEmpty()==1)
         {
             $stack->push($line{$i});
@@ -47,17 +46,18 @@ for($i=0;$i<strlen($line);$i++)
         }
         elseif($stack->getPriority($stack->top())>=$stack->getPriority($line{$i}))
         {
-            while(($stack->getPriority($stack->top())>=$stack->getPriority($line{$i}))||($stack->isEmpty()!=1))
+
+           while(($stack->getPriority($stack->top())>=$stack->getPriority($line{$i})))/*||($stack->isEmpty()!=1))*/
             {
                 $outputLine[$index]=$stack->pop();
                 $index++;
             }
+
             $stack->push($line{$i});
 
         }
     }
-    else throw new RuntimeException("There is the wrong symbol - ".$line{$i});
-
+    else throw new RuntimeException("There is the unknown symbol - ".$line{$i});
 
 
 }
@@ -76,7 +76,7 @@ if(!$stack->isEmpty())
         $index++;
     }
 }
-$stack->showStack();
+//$stack->showStack();
 echo "  ";
 for($i=0;$i<count($outputLine);$i++)
 {
@@ -93,30 +93,34 @@ for($i=0;$i<count($outputLine);$i++)
     }
     else
     {
-        if($outputLine[$i]=='+')
-        {
-            $y=$stack->pop();
-            $x=$stack->pop();
-            $stack->push($x+$y);
+        switch($outputLine[$i]){
+            case "~":
+                $stack->push($stack->pop()*-1);
+                break;
+            case '+':
+                $y=$stack->pop();
+                $x=$stack->pop();
+                $stack->push($x+$y);
+                break;
+            case '-':
+                $y=$stack->pop();
+                $x=$stack->pop();
+                $stack->push($x-$y);
+                break;
+            case '*':
+                $y=$stack->pop();
+                $x=$stack->pop();
+                $stack->push($x*$y);
+                break;
+            case '/':
+                $y=$stack->pop();
+                $x=$stack->pop();
+                $stack->push($x/$y);
+                break;
+
         }
-        if($outputLine[$i]=='-')
-        {
-            $y=$stack->pop();
-            $x=$stack->pop();
-            $stack->push($x-$y);
-        }
-        if($outputLine[$i]=='*')
-        {
-            $y=$stack->pop();
-            $x=$stack->pop();
-            $stack->push($x*$y);
-        }
-        if($outputLine[$i]=='/')
-        {
-            $y=$stack->pop();
-            $x=$stack->pop();
-            $stack->push($x/$y);
-        }
+
+
 
     }
 }
@@ -159,15 +163,22 @@ class Stack
 
     public function getPriority($symbol)
     {
-        if(($symbol=='+')||($symbol=='-'))
-        {
-            return 1;
+        switch($symbol){
+            case '~':
+                return 4;
+            case '/':
+                goto q;
+            q: case '*':
+            return 3;
+            case '-':
+               goto l;
+            l:case '+':
+                return 2;
+            case '(':
+                return 1;
+            default: return 0;
         }
-        elseif(($symbol=='*')||($symbol=='/'))
-        {
-            return 2;
-        }
-        return 0;
+
     }
 
     public function pop() {
