@@ -4,7 +4,7 @@ echo $line;
 $stack=new Stack();
 //$line="9*(3+5)/2";
 //$inputline="(-5-1)/2+7";
-$inputline="(5+(-7))/2+9";
+$inputline="(5+(-7))/2+9^2";
 
 $line=str_replace("(-","(~",$inputline);
 
@@ -35,7 +35,7 @@ for($i=0;$i<strlen($line);$i++)
         }
         $stack->pop();
     }
-    elseif(($line{$i}=='~')||($line{$i}=='+')||($line{$i}=='-')||($line{$i}=='*')||($line{$i}=='/')){
+    elseif($stack->IsOperation($line{$i})){
         if($stack->isEmpty()==1)
         {
             $stack->push($line{$i});
@@ -94,8 +94,13 @@ for($i=0;$i<count($outputLine);$i++)
     else
     {
         switch($outputLine[$i]){
-            case "~":
+            case '~':
                 $stack->push($stack->pop()*-1);
+                break;
+            case '^':
+                $y=$stack->pop();
+                $x=$stack->pop();
+                $stack->push($x**$y);
                 break;
             case '+':
                 $y=$stack->pop();
@@ -142,11 +147,26 @@ class Stack
     protected $stack;
     protected $limit;
 
+    protected $operations;
+
 
     public function __construct($limit=15)
     {
         $this->stack=array();
         $this->limit=$limit;
+        $this->operations=array('+','-','*','/','^','~');
+    }
+
+    public function IsOperation($symbol)
+    {
+        for($i=0;$i<count($this->operations);$i++)
+        {
+            if($symbol==$this->operations[$i])
+            {
+                return true;
+            }
+        }
+        return false;
     }
     public function push($item) {
 
@@ -165,6 +185,8 @@ class Stack
     {
         switch($symbol){
             case '~':
+                return 5;
+            case '^':
                 return 4;
             case '/':
                 goto q;
