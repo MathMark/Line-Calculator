@@ -1,10 +1,13 @@
 <?php
-//$line=$_POST["expression"];
-echo $line;
+$inputline=$_POST["expression"];
+//echo $line;
 $stack=new Stack();
 //$line="9*(3+5)/2";
 //$inputline="(-5-1)/2+7";
-$inputline="(5+(-7))/2+9^2";
+//$inputline="(5+(-7))/2+9^2";
+//$inputline="(50+10)/2";
+echo "Input line: ".$inputline;
+echo "\n";
 
 $line=str_replace("(-","(~",$inputline);
 
@@ -12,6 +15,8 @@ $line=str_replace("(-","(~",$inputline);
 $outputLine=array();
 
 $index=0;
+
+$longdigit="";
 try{
 
 
@@ -19,10 +24,18 @@ for($i=0;$i<strlen($line);$i++)
 {
 
     if(ctype_digit($line{$i})==1){
-        $outputLine[$index]=$line{$i};
-        $index++;
+		//$outputLine[$index]=$line{$i};
+		// $index++;
+		$longdigit.=$line{$i};
     }
-    elseif($line{$i}=='(')
+	else{
+		if($longdigit!="")
+		{
+			$outputLine[$index]=$longdigit;
+			$index++;
+			$longdigit="";
+		}
+    if($line{$i}=='(')
     {
         $stack->push($line{$i});
     }
@@ -58,9 +71,16 @@ for($i=0;$i<strlen($line);$i++)
         }
     }
     else throw new RuntimeException("There is the unknown symbol - ".$line{$i});
+	}
 
 
 }
+	if($longdigit!="")
+		{
+			$outputLine[$index]=$longdigit;
+			$index++;
+			$longdigit="";
+		}
 }
 catch (RuntimeException $e)
 {
@@ -77,11 +97,12 @@ if(!$stack->isEmpty())
     }
 }
 //$stack->showStack();
-echo "  ";
+echo "Output line: ";
 for($i=0;$i<count($outputLine);$i++)
 {
-    echo $outputLine[$i];
+    echo $outputLine[$i]." ";
 }
+echo "\n";
 
 try
 {
@@ -129,7 +150,7 @@ for($i=0;$i<count($outputLine);$i++)
 
     }
 }
-echo "   ";
+echo "Result: ";
 $Result=$stack->pop();
 }
 catch (RuntimeException $e)
