@@ -1,0 +1,23 @@
+body{
+	background-color: rgb(40,40,40);
+}
+h1{
+	color: white;
+	font-family: "Consolas";
+}
+.text_element{
+	width:80%;
+	font-family: "Consolas";
+}
+.button_element{
+	font-family: "Consolas";
+
+
+	background-color: black;
+	color:white;
+	font-style: italic
+	
+}
+div.calculator{
+	background-color: rgb(60,60,60);
+}
