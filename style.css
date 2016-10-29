@@ -5,6 +5,11 @@ h1{
 	color: white;
 	font-family: "Consolas";
 }
+center
+{
+	font-family: "Consolas";
+	color: white;
+}
 .text_element{
 	width:80%;
 	font-family: "Consolas";
@@ -21,3 +26,4 @@ h1{
 div.calculator{
 	background-color: rgb(60,60,60);
 }
+
